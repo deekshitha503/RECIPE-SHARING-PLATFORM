@@ -1,41 +1,64 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { SearchBar } from "@/components/SearchBar";
 import { RecipeCard } from "@/components/RecipeCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-// Temporary mock data
-const mockRecipes = [
-  {
-    id: "1",
-    title: "Chocolate Chip Cookies",
-    description: "Classic homemade chocolate chip cookies that are soft, chewy, and loaded with chocolate chips.",
-  },
-  {
-    id: "2",
-    title: "Spaghetti Carbonara",
-    description: "Traditional Italian pasta dish with eggs, cheese, pancetta, and black pepper.",
-  },
-  // Add more mock recipes as needed
-];
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [recipes, setRecipes] = useState<any[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<any[]>([]);
 
-  const filteredRecipes = mockRecipes.filter((recipe) =>
-    recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
+  useEffect(() => {
+    fetchRecipes();
+    fetchFavorites();
+  }, []);
+
+  const fetchRecipes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('Recipe Space')
+        .select('*');
+      
+      if (error) throw error;
+      setRecipes(data || []);
+      console.log('Recipes fetched:', data);
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+    }
+  };
+
+  const fetchFavorites = async () => {
+    try {
+      const { data: favoritesData, error: favoritesError } = await supabase
+        .from('Favorites')
+        .select(`
+          recipe_id,
+          Recipe Space (*)
+        `);
+      
+      if (favoritesError) throw favoritesError;
+      
+      const favoriteRecipes = favoritesData?.map(fav => fav['Recipe Space']) || [];
+      const favoriteIds = favoritesData?.map(fav => fav.recipe_id.toString()) || [];
+      
+      setFavorites(favoriteRecipes);
+      setFavoriteIds(favoriteIds);
+      console.log('Favorites fetched:', favoriteRecipes);
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+    }
+  };
+
+  const filteredRecipes = recipes.filter((recipe) =>
+    recipe['Recipe Title'].toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const favorites = mockRecipes.filter((recipe) => favoriteIds.includes(recipe.id));
-
-  const handleFavoriteToggle = (id: string, isFavorite: boolean) => {
-    setFavoriteIds(prev => 
-      isFavorite 
-        ? [...prev, id]
-        : prev.filter(favId => favId !== id)
-    );
-    console.log(`Favorites updated:`, favoriteIds);
+  const handleFavoriteToggle = async (id: string, isFavorite: boolean) => {
+    await fetchFavorites(); // Refresh favorites after toggle
+    console.log(`Favorites updated for recipe ${id}, isFavorite: ${isFavorite}`);
   };
 
   return (
@@ -56,9 +79,11 @@ const Index = () => {
               {filteredRecipes.map((recipe) => (
                 <RecipeCard 
                   key={recipe.id} 
-                  {...recipe} 
+                  id={recipe.id.toString()}
+                  title={recipe['Recipe Title']}
+                  description={recipe['Recipe Description'] || ''}
                   onFavoriteToggle={handleFavoriteToggle}
-                  initialFavorite={favoriteIds.includes(recipe.id)}
+                  initialFavorite={favoriteIds.includes(recipe.id.toString())}
                 />
               ))}
             </div>
@@ -68,8 +93,10 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {favorites.map((recipe) => (
                 <RecipeCard 
-                  key={recipe.id} 
-                  {...recipe} 
+                  key={recipe.id}
+                  id={recipe.id.toString()}
+                  title={recipe['Recipe Title']}
+                  description={recipe['Recipe Description'] || ''}
                   onFavoriteToggle={handleFavoriteToggle}
                   initialFavorite={true}
                 />

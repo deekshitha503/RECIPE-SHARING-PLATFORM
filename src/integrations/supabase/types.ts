@@ -13,22 +13,27 @@ export type Database = {
         Row: {
           created_at: string
           id: number
-          "Recipe Description": string
-          "Recipe Title": string
+          recipe_id: number | null
         }
         Insert: {
           created_at?: string
           id?: number
-          "Recipe Description": string
-          "Recipe Title": string
+          recipe_id?: number | null
         }
         Update: {
           created_at?: string
           id?: number
-          "Recipe Description"?: string
-          "Recipe Title"?: string
+          recipe_id?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "Favorites_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "Recipe Space"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       "Recipe Space": {
         Row: {

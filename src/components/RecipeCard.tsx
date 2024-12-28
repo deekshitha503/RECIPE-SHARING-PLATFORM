@@ -1,6 +1,7 @@
 import { Heart, ThumbsUp, UtensilsCrossed } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 interface RecipeCardProps {
   id: string;
@@ -22,11 +23,32 @@ export const RecipeCard = ({
   const [isFavorite, setIsFavorite] = useState(initialFavorite);
   const [isLiked, setIsLiked] = useState(false);
 
-  const handleFavoriteClick = () => {
+  const handleFavoriteClick = async () => {
     const newFavoriteState = !isFavorite;
-    setIsFavorite(newFavoriteState);
-    onFavoriteToggle(id, newFavoriteState);
-    console.log(`Recipe ${id} ${newFavoriteState ? 'favorited' : 'unfavorited'}`);
+    try {
+      if (newFavoriteState) {
+        // Add to favorites
+        const { error } = await supabase
+          .from('Favorites')
+          .insert([{ recipe_id: parseInt(id) }]);
+        
+        if (error) throw error;
+      } else {
+        // Remove from favorites
+        const { error } = await supabase
+          .from('Favorites')
+          .delete()
+          .eq('recipe_id', parseInt(id));
+        
+        if (error) throw error;
+      }
+      
+      setIsFavorite(newFavoriteState);
+      onFavoriteToggle(id, newFavoriteState);
+      console.log(`Recipe ${id} ${newFavoriteState ? 'favorited' : 'unfavorited'}`);
+    } catch (error) {
+      console.error('Error updating favorite:', error);
+    }
   };
 
   return (
