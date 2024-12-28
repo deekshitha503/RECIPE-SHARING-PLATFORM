@@ -1,4 +1,4 @@
-import { Heart, ThumbsUp } from "lucide-react";
+import { Heart, ThumbsUp, UtensilsCrossed } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
