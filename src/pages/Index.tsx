@@ -36,16 +36,17 @@ const Index = () => {
         .from('Favorites')
         .select(`
           recipe_id,
-          Recipe Space (*)
+          "Recipe Space" (*)
         `);
       
       if (favoritesError) throw favoritesError;
       
+      // Extract the recipe data from the joined query
       const favoriteRecipes = favoritesData?.map(fav => fav['Recipe Space']) || [];
-      const favoriteIds = favoritesData?.map(fav => fav.recipe_id.toString()) || [];
+      const favoriteIds = favoritesData?.map(fav => fav.recipe_id?.toString()) || [];
       
-      setFavorites(favoriteRecipes);
-      setFavoriteIds(favoriteIds);
+      setFavorites(favoriteRecipes.filter(Boolean)); // Filter out any null values
+      setFavoriteIds(favoriteIds.filter(Boolean)); // Filter out any null values
       console.log('Favorites fetched:', favoriteRecipes);
     } catch (error) {
       console.error('Error fetching favorites:', error);
