@@ -59,13 +59,13 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-recipe-cream">
       <Header />
-      <main className="container mx-auto px-4 pt-24 pb-12">
-        <div className="flex justify-center gap-4 mb-8">
+      <main className="container mx-auto px-6 pt-24 pb-12">
+        <div className="flex justify-center gap-6 mb-12">
           <button
             onClick={() => setActiveTab('search')}
-            className={`px-8 py-3 rounded-lg font-medium text-lg transition-colors ${
+            className={`px-10 py-4 rounded-2xl font-semibold text-xl transition-all ${
               activeTab === 'search'
-                ? 'bg-recipe-orange text-white'
+                ? 'bg-recipe-orange text-white shadow-lg'
                 : 'bg-white text-recipe-orange hover:bg-recipe-orange/10'
             }`}
           >
@@ -73,9 +73,9 @@ const Index = () => {
           </button>
           <button
             onClick={() => setActiveTab('favorites')}
-            className={`px-8 py-3 rounded-lg font-medium text-lg transition-colors ${
+            className={`px-10 py-4 rounded-2xl font-semibold text-xl transition-all ${
               activeTab === 'favorites'
-                ? 'bg-recipe-orange text-white'
+                ? 'bg-recipe-orange text-white shadow-lg'
                 : 'bg-white text-recipe-orange hover:bg-recipe-orange/10'
             }`}
           >
@@ -83,7 +83,7 @@ const Index = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8">
           {activeTab === 'search' && recipes.map((recipe) => (
             <RecipeCard 
               key={recipe.id} 
