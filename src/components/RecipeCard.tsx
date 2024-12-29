@@ -50,38 +50,38 @@ export const RecipeCard = ({
   };
 
   return (
-    <div className="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
       <Link to={`/recipe/${id}`} className="block">
         <div className="relative h-64 bg-recipe-cream">
           {image ? (
             <img src={image} alt={title} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-recipe-orange">
-              <UtensilsCrossed className="h-20 w-20" />
+              <UtensilsCrossed className="h-16 w-16" />
             </div>
           )}
         </div>
-        <div className="p-8">
-          <h3 className="text-2xl font-bold text-recipe-brown hover:text-recipe-orange transition-colors mb-4 line-clamp-2">
+        <div className="p-6">
+          <h3 className="text-2xl font-semibold text-recipe-brown hover:text-recipe-orange transition-colors mb-3">
             {title}
           </h3>
           <p className="text-gray-600 text-lg line-clamp-3">{description}</p>
         </div>
       </Link>
-      <div className="px-8 pb-8 pt-2 flex justify-end gap-6">
+      <div className="px-6 pb-6 pt-2 flex justify-end gap-6">
         <button
           onClick={() => setIsLiked(!isLiked)}
           className="text-recipe-orange hover:text-recipe-peach transition-colors"
           aria-label="Like recipe"
         >
-          <ThumbsUp className={`h-8 w-8 ${isLiked ? "fill-current" : ""}`} />
+          <ThumbsUp className={`h-7 w-7 ${isLiked ? "fill-current" : ""}`} />
         </button>
         <button
           onClick={handleFavoriteClick}
           className="text-recipe-orange hover:text-recipe-peach transition-colors"
           aria-label="Favorite recipe"
         >
-          <Heart className={`h-8 w-8 ${isFavorite ? "fill-current" : ""}`} />
+          <Heart className={`h-7 w-7 ${isFavorite ? "fill-current" : ""}`} />
         </button>
       </div>
     </div>
