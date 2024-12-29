@@ -21,11 +21,22 @@ const mockRecipes = [
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [favorites] = useState(mockRecipes.slice(0, 1)); // Temporary: first recipe as favorite
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
 
   const filteredRecipes = mockRecipes.filter((recipe) =>
     recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const favorites = mockRecipes.filter((recipe) => favoriteIds.includes(recipe.id));
+
+  const handleFavoriteToggle = (id: string, isFavorite: boolean) => {
+    setFavoriteIds(prev => 
+      isFavorite 
+        ? [...prev, id]
+        : prev.filter(favId => favId !== id)
+    );
+    console.log(`Favorites updated:`, favoriteIds);
+  };
 
   return (
     <div className="min-h-screen bg-recipe-cream">
@@ -43,7 +54,12 @@ const Index = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredRecipes.map((recipe) => (
-                <RecipeCard key={recipe.id} {...recipe} />
+                <RecipeCard 
+                  key={recipe.id} 
+                  {...recipe} 
+                  onFavoriteToggle={handleFavoriteToggle}
+                  initialFavorite={favoriteIds.includes(recipe.id)}
+                />
               ))}
             </div>
           </TabsContent>
@@ -51,7 +67,12 @@ const Index = () => {
           <TabsContent value="favorites">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {favorites.map((recipe) => (
-                <RecipeCard key={recipe.id} {...recipe} />
+                <RecipeCard 
+                  key={recipe.id} 
+                  {...recipe} 
+                  onFavoriteToggle={handleFavoriteToggle}
+                  initialFavorite={true}
+                />
               ))}
             </div>
           </TabsContent>

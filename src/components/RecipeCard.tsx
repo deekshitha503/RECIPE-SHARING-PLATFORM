@@ -1,4 +1,4 @@
-import { Heart, UtensilsCrossed } from "lucide-react";
+import { Heart, ThumbsUp, UtensilsCrossed } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -7,10 +7,27 @@ interface RecipeCardProps {
   title: string;
   description: string;
   image?: string;
+  onFavoriteToggle: (id: string, isFavorite: boolean) => void;
+  initialFavorite?: boolean;
 }
 
-export const RecipeCard = ({ id, title, description, image }: RecipeCardProps) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+export const RecipeCard = ({ 
+  id, 
+  title, 
+  description, 
+  image, 
+  onFavoriteToggle,
+  initialFavorite = false 
+}: RecipeCardProps) => {
+  const [isFavorite, setIsFavorite] = useState(initialFavorite);
+  const [isLiked, setIsLiked] = useState(false);
+
+  const handleFavoriteClick = () => {
+    const newFavoriteState = !isFavorite;
+    setIsFavorite(newFavoriteState);
+    onFavoriteToggle(id, newFavoriteState);
+    console.log(`Recipe ${id} ${newFavoriteState ? 'favorited' : 'unfavorited'}`);
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
@@ -30,10 +47,18 @@ export const RecipeCard = ({ id, title, description, image }: RecipeCardProps) =
           </h3>
         </Link>
         <p className="mt-2 text-gray-600 line-clamp-2">{description}</p>
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex justify-end gap-4">
           <button
-            onClick={() => setIsFavorite(!isFavorite)}
+            onClick={() => setIsLiked(!isLiked)}
             className="text-recipe-orange hover:text-recipe-peach transition-colors"
+            aria-label="Like recipe"
+          >
+            <ThumbsUp className={`h-6 w-6 ${isLiked ? "fill-current" : ""}`} />
+          </button>
+          <button
+            onClick={handleFavoriteClick}
+            className="text-recipe-orange hover:text-recipe-peach transition-colors"
+            aria-label="Favorite recipe"
           >
             <Heart className={`h-6 w-6 ${isFavorite ? "fill-current" : ""}`} />
           </button>
