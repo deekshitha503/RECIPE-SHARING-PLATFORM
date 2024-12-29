@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { RecipeCard } from "@/components/RecipeCard";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [favorites, setFavorites] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'search' | 'favorites'>('search');
 
   useEffect(() => {
     fetchRecipes();
@@ -60,42 +60,52 @@ const Index = () => {
     <div className="min-h-screen bg-recipe-cream">
       <Header />
       <main className="container mx-auto px-4 pt-24 pb-12">
-        <Tabs defaultValue="search" className="w-full">
-          <TabsList className="w-full max-w-md mx-auto mb-8">
-            <TabsTrigger value="search" className="w-1/2">Recipe Search</TabsTrigger>
-            <TabsTrigger value="favorites" className="w-1/2">Favorites</TabsTrigger>
-          </TabsList>
+        <div className="flex justify-center gap-4 mb-8">
+          <button
+            onClick={() => setActiveTab('search')}
+            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+              activeTab === 'search'
+                ? 'bg-recipe-orange text-white'
+                : 'bg-white text-recipe-orange hover:bg-recipe-orange/10'
+            }`}
+          >
+            Recipe Search
+          </button>
+          <button
+            onClick={() => setActiveTab('favorites')}
+            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+              activeTab === 'favorites'
+                ? 'bg-recipe-orange text-white'
+                : 'bg-white text-recipe-orange hover:bg-recipe-orange/10'
+            }`}
+          >
+            Favorites
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {activeTab === 'search' && recipes.map((recipe) => (
+            <RecipeCard 
+              key={recipe.id} 
+              id={recipe.id.toString()}
+              title={recipe['Recipe Title']}
+              description={recipe['Recipe Description'] || ''}
+              onFavoriteToggle={handleFavoriteToggle}
+              initialFavorite={favoriteIds.includes(recipe.id.toString())}
+            />
+          ))}
           
-          <TabsContent value="search">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recipes.map((recipe) => (
-                <RecipeCard 
-                  key={recipe.id} 
-                  id={recipe.id.toString()}
-                  title={recipe['Recipe Title']}
-                  description={recipe['Recipe Description'] || ''}
-                  onFavoriteToggle={handleFavoriteToggle}
-                  initialFavorite={favoriteIds.includes(recipe.id.toString())}
-                />
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="favorites">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {favorites.map((recipe) => (
-                <RecipeCard 
-                  key={recipe.id}
-                  id={recipe.id.toString()}
-                  title={recipe['Recipe Title']}
-                  description={recipe['Recipe Description'] || ''}
-                  onFavoriteToggle={handleFavoriteToggle}
-                  initialFavorite={true}
-                />
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+          {activeTab === 'favorites' && favorites.map((recipe) => (
+            <RecipeCard 
+              key={recipe.id}
+              id={recipe.id.toString()}
+              title={recipe['Recipe Title']}
+              description={recipe['Recipe Description'] || ''}
+              onFavoriteToggle={handleFavoriteToggle}
+              initialFavorite={true}
+            />
+          ))}
+        </div>
       </main>
     </div>
   );
