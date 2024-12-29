@@ -18,7 +18,8 @@ const Index = () => {
     try {
       const { data, error } = await supabase
         .from('Recipe Space')
-        .select('*');
+        .select('*')
+        .order('created_at', { ascending: false });
       
       if (error) throw error;
       setRecipes(data || []);
