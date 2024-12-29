@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
-import { SearchBar } from "@/components/SearchBar";
 import { RecipeCard } from "@/components/RecipeCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [recipes, setRecipes] = useState<any[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [favorites, setFavorites] = useState<any[]>([]);
@@ -41,24 +39,19 @@ const Index = () => {
       
       if (favoritesError) throw favoritesError;
       
-      // Extract the recipe data from the joined query
       const favoriteRecipes = favoritesData?.map(fav => fav['Recipe Space']) || [];
       const favoriteIds = favoritesData?.map(fav => fav.recipe_id?.toString()) || [];
       
-      setFavorites(favoriteRecipes.filter(Boolean)); // Filter out any null values
-      setFavoriteIds(favoriteIds.filter(Boolean)); // Filter out any null values
+      setFavorites(favoriteRecipes.filter(Boolean));
+      setFavoriteIds(favoriteIds.filter(Boolean));
       console.log('Favorites fetched:', favoriteRecipes);
     } catch (error) {
       console.error('Error fetching favorites:', error);
     }
   };
 
-  const filteredRecipes = recipes.filter((recipe) =>
-    recipe['Recipe Title'].toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const handleFavoriteToggle = async (id: string, isFavorite: boolean) => {
-    await fetchFavorites(); // Refresh favorites after toggle
+    await fetchFavorites();
     console.log(`Favorites updated for recipe ${id}, isFavorite: ${isFavorite}`);
   };
 
@@ -73,11 +66,8 @@ const Index = () => {
           </TabsList>
           
           <TabsContent value="search">
-            <div className="mb-8">
-              <SearchBar onSearch={setSearchQuery} />
-            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredRecipes.map((recipe) => (
+              {recipes.map((recipe) => (
                 <RecipeCard 
                   key={recipe.id} 
                   id={recipe.id.toString()}
