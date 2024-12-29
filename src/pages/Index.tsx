@@ -63,7 +63,7 @@ const Index = () => {
         <div className="flex justify-center gap-4 mb-8">
           <button
             onClick={() => setActiveTab('search')}
-            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-8 py-3 rounded-lg font-medium text-lg transition-colors ${
               activeTab === 'search'
                 ? 'bg-recipe-orange text-white'
                 : 'bg-white text-recipe-orange hover:bg-recipe-orange/10'
@@ -73,7 +73,7 @@ const Index = () => {
           </button>
           <button
             onClick={() => setActiveTab('favorites')}
-            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-8 py-3 rounded-lg font-medium text-lg transition-colors ${
               activeTab === 'favorites'
                 ? 'bg-recipe-orange text-white'
                 : 'bg-white text-recipe-orange hover:bg-recipe-orange/10'
@@ -83,7 +83,7 @@ const Index = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {activeTab === 'search' && recipes.map((recipe) => (
             <RecipeCard 
               key={recipe.id} 
